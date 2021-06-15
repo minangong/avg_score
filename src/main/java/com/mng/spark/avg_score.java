@@ -23,13 +23,15 @@ import java.util.List;
  * Description:
  */
 public class avg_score{
-
+    //private static String FilePath = "./data/grades.txt";
+    //private static String outputFilePath1 = "./data/result.txt";
     public static void main(String[] args) throws IOException {
             SparkConf conf = new SparkConf();
             // 配置spark 本地
             conf.setMaster("local");
             conf.setAppName("WordCount");
             JavaSparkContext sc = new JavaSparkContext(conf);
+            //JavaRDD<String> fileRdd=sc.textFile(FilePath);
             JavaRDD<String> fileRdd = sc.textFile("hdfs://localhost:9000/input/grades.txt");
             // 通过text生成RDD
             JavaRDD<String> lineRDD = fileRdd.flatMap(s -> Arrays.asList(s.split("\n")).iterator());
@@ -74,15 +76,14 @@ public class avg_score{
             });
 
             avgScoreRDD.saveAsTextFile("hdfs://localhost:9000/output3/result1");
-           // JavaRDD<String> outRDD=avgScoreRDD.map(i->i.toString());
-            //outRDD.saveAsTextFile("hdfs://localhost:9000/data/result");
-//            List<String> stringList=outRDD.collect();
-//           // BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath1));
-//            for (String s:stringList){
+//             JavaRDD<String> outRDD=avgScoreRDD.map(i->i.toString());
+//             List<String> stringList=outRDD.collect();
+//             BufferedWriter bw = new BufferedWriter(new FileWriter(outputFilePath1));
+//             for (String s:stringList){
 //                  bw.write(s);
-//                bw.newLine();
-//            }
-//            //bw.close();
+//                  bw.newLine();
+//             }
+//             bw.close();
 
 
             JavaPairRDD<String,Integer> numRDD=avgScoreRDD.mapToPair((Tuple2<Tuple2<String,String>,Double> input)->{
